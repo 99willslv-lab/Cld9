@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Preços - PDV vs Encarte</title>
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="Calculadora profissional para supermercados com comparador de preços PDV vs Etiqueta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calculadora">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a2e' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>🧮</text></svg>">
+    <link rel="manifest" href="data:application/json,{%22name%22:%22Calculadora%20Pro%22,%22short_name%22:%22Calculadora%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%231a1a2e%22,%22orientation%22:%22portrait-primary%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a2e' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>🧮</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+    <title>Calculadora - Preços Supermercado</title>
     <style>
         * {
             margin: 0;
@@ -75,6 +82,31 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .install-btn {
+            margin-top: 16px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #16c784 0%, #12a76e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 199, 132, 0.3);
+        }
+
+        .install-btn.show {
+            display: inline-block;
         }
 
         .form-group {
@@ -590,14 +622,13 @@
             <div class="header">
                 <h1>Calculadora</h1>
                 <p>Ferramentas de cálculo</p>
+                <button id="installBtn" class="install-btn" onclick="instalarApp()">📱 Instalar no Celular</button>
             </div>
 
             <div class="tabs">
                 <button class="tab-btn ativo" onclick="abaCalculadora()">Calculadora</button>
                 <button class="tab-btn" onclick="abaComparador()">Comparador</button>
             </div>
-
-            <!-- ABA CALCULADORA NORMAL -->
             <div id="tabCalculadora" class="tab-content ativo">
                 <div class="calculadora-display" id="display">0</div>
                 <div class="calculadora-grid">
@@ -744,6 +775,7 @@
         let calcNovoValor = true;
 
         // ABAS
+
         function abaCalculadora() {
             document.getElementById('tabCalculadora').classList.add('ativo');
             document.getElementById('tabComparador').classList.remove('ativo');
@@ -991,6 +1023,30 @@
 
         atualizarDisplay();
         exibirHistorico();
+
+        // PWA INSTALL
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').classList.add('show');
+        });
+
+        function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installBtn').classList.remove('show');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installBtn').classList.remove('show');
+        });
     </script>
 </body>
 </html>
