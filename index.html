@@ -578,7 +578,105 @@
             background: #fecaca;
         }
 
-        @media (max-width: 480px) {
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .modal-field {
+            margin-bottom: 16px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-field input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 26, 46, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-btn.save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn.save:hover {
+            background: #0f0f1f;
+        }
+
+        .modal-btn.cancel {
+            background: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e5e7eb;
+        }
             .card {
                 padding: 30px 20px;
             }
@@ -716,6 +814,15 @@
                         >
                     </div>
 
+                    <div class="form-group">
+                        <label for="nomeProduto">Nome do Produto</label>
+                        <input
+                            type="text"
+                            id="nomeProduto"
+                            placeholder="Ex: Arroz 5kg"
+                        >
+                    </div>
+
                     <div class="buttons">
                         <button type="button" class="btn-calcular" onclick="calcular()">
                             Calcular
@@ -763,6 +870,29 @@
                     </div>
                     <button class="btn-limpar-historico" onclick="limparHistorico()">Limpar Histórico</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIÇÃO -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Editar Cálculo</div>
+            <div class="modal-field">
+                <label>Produto</label>
+                <input type="text" id="editNomeProduto" placeholder="Nome do produto">
+            </div>
+            <div class="modal-field">
+                <label>PDV</label>
+                <input type="text" id="editNumeroPDV" placeholder="Número do PDV">
+            </div>
+            <div class="modal-field">
+                <label>Cupom</label>
+                <input type="text" id="editNumeroCupom" placeholder="Número do cupom">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn save" onclick="salvarEdicao()">Salvar</button>
+                <button class="modal-btn cancel" onclick="fecharModal()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -905,9 +1035,14 @@
             container.innerHTML = historico.map((item, idx) => `
                 <div class="historico-item">
                     <div class="historico-info">
-                        <div style="grid-column: 1 / -1; font-size: 11px; color: var(--neutral);">
+                        <div style="grid-column: 1 / -1; font-size: 11px; color: var(--neutral); margin-bottom: 8px;">
                             ${item.timestamp}
                         </div>
+                        ${item.nomeProduto ? `
+                        <div style="grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
+                            ${item.nomeProduto}
+                        </div>
+                        ` : ''}
                         ${item.numeroPDV ? `<div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${item.numeroPDV}</span></div>` : ''}
                         ${item.numeroCupom ? `<div class="historico-field"><span class="historico-label">Cupom</span><span class="historico-valor">${item.numeroCupom}</span></div>` : ''}
                         <div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${formatarMoeda(item.precoPDV)}</span></div>
@@ -917,6 +1052,7 @@
                         <div class="historico-resultado-label">Diferença</div>
                         <div class="historico-resultado-valor ${item.status}">${formatarMoeda(item.diferencaTotal)}</div>
                     </div>
+                    <button class="historico-delete" onclick="abrirModalEdicao(${idx})">✏️</button>
                     <button class="historico-delete" onclick="deletarDoHistorico(${idx})">✕</button>
                 </div>
             `).join('');
@@ -936,12 +1072,49 @@
             }
         }
 
+        let editandoIdx = null;
+
+        function abrirModalEdicao(idx) {
+            editandoIdx = idx;
+            const historico = carregarHistorico();
+            const item = historico[idx];
+            
+            document.getElementById('editNomeProduto').value = item.nomeProduto || '';
+            document.getElementById('editNumeroPDV').value = item.numeroPDV || '';
+            document.getElementById('editNumeroCupom').value = item.numeroCupom || '';
+            
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function fecharModal() {
+            document.getElementById('editModal').classList.remove('show');
+            editandoIdx = null;
+        }
+
+        function salvarEdicao() {
+            if (editandoIdx === null) return;
+            
+            const historico = carregarHistorico();
+            historico[editandoIdx].nomeProduto = document.getElementById('editNomeProduto').value;
+            historico[editandoIdx].numeroPDV = document.getElementById('editNumeroPDV').value;
+            historico[editandoIdx].numeroCupom = document.getElementById('editNumeroCupom').value;
+            
+            salvarHistorico(historico);
+            exibirHistorico();
+            fecharModal();
+        }
+
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) fecharModal();
+        });
+
         function calcular() {
             const precoPDV = parseFloat(document.getElementById('precoPDV').value);
             const precoEncarte = parseFloat(document.getElementById('precoEncarte').value);
             const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
             const numeroPDV = document.getElementById('numeroPDV').value.trim();
             const numeroCupom = document.getElementById('numeroCupom').value.trim();
+            const nomeProduto = document.getElementById('nomeProduto').value.trim();
 
             if (!precoPDV && precoPDV !== 0) {
                 alert('Informe o preço do PDV');
@@ -1001,7 +1174,8 @@
                 diferencaTotal,
                 status,
                 numeroPDV,
-                numeroCupom
+                numeroCupom,
+                nomeProduto
             });
         }
 
