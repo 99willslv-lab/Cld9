@@ -37,25 +37,33 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1a1a3e 100%);
             min-height: 100vh;
+            height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
-            padding: 16px;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 420px;
+            max-width: 100%;
+            height: 100vh;
         }
 
         .card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border-radius: 24px;
-            padding: 24px 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border-radius: 0;
+            padding: 20px 16px;
+            box-shadow: none;
             animation: slideUp 0.6s ease-out;
-            border: 1px solid rgba(14, 165, 233, 0.2);
+            border: none;
             backdrop-filter: blur(10px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
         @keyframes slideUp {
@@ -71,26 +79,27 @@
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+            padding-top: 8px;
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
 
         .header p {
-            font-size: 11px;
-            color: rgba(148, 163, 184, 0.8);
+            font-size: 10px;
+            color: rgba(148, 163, 184, 0.7);
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 1.1px;
         }
 
         .install-btn {
@@ -120,7 +129,7 @@
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         label {
@@ -135,8 +144,8 @@
 
         input {
             width: 100%;
-            padding: 12px 14px;
-            font-size: 15px;
+            padding: 10px 12px;
+            font-size: 14px;
             border: none;
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -159,7 +168,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 14px;
         }
 
         button {
@@ -206,7 +215,7 @@
         }
 
         .resultado {
-            margin-top: 35px;
+            margin-top: 12px;
             display: none;
             animation: fadeIn 0.4s ease-out;
         }
@@ -323,21 +332,21 @@
         .tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            padding: 6px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, rgba(241, 245, 249, 0.1) 0%, rgba(226, 232, 240, 0.1) 100%);
+            padding: 5px;
             border-radius: 12px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px 16px;
+            padding: 10px 12px;
             background: transparent;
             border: none;
             border-radius: 10px;
             color: var(--neutral);
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
@@ -347,7 +356,7 @@
         .tab-btn.ativo {
             background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
         }
 
         .tab-content {
@@ -400,23 +409,26 @@
             font-size: 18px;
             font-weight: 700;
             border: none;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.5) 100%);
             color: var(--primary);
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
             position: relative;
         }
 
         .calc-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.2);
+            border-color: rgba(14, 165, 233, 0.4);
         }
 
         .calc-btn:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
         }
             background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
             color: white;
@@ -444,55 +456,76 @@
 
         .calc-btn.limpar {
             grid-column: 1 / 3;
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(244, 63, 94, 0.15) 100%);
             color: var(--danger);
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.1);
         }
 
         .calc-btn.limpar:hover {
-            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(244, 63, 94, 0.25) 100%);
+            border-color: rgba(244, 63, 94, 0.5);
             box-shadow: 0 6px 16px rgba(244, 63, 94, 0.2);
         }
 
         .historico-container {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 2px solid #e5e7eb;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(14, 165, 233, 0.2);
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .historico-title {
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 800;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
         }
 
         .historico-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 400px;
+            gap: 8px;
+            flex: 1;
             overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .historico-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .historico-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .historico-list::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.3);
+            border-radius: 2px;
         }
 
         .historico-item {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: all 0.2s ease;
+            gap: 8px;
         }
 
         .historico-item:hover {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
         }
 
         .historico-info {
@@ -576,14 +609,14 @@
 
         .btn-limpar-historico {
             width: 100%;
-            margin-top: 12px;
-            padding: 12px;
+            margin-top: 8px;
+            padding: 10px;
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: var(--danger);
             border: none;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -821,15 +854,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="numeroCupom">Número do Cupom</label>
-                        <input
-                            type="text"
-                            id="numeroCupom"
-                            placeholder="Ex: 123456"
-                        >
-                    </div>
-
-                    <div class="form-group">
                         <label for="nomeProduto">Nome do Produto</label>
                         <input
                             type="text"
@@ -859,10 +883,6 @@
                                 <div>
                                     <span class="resultado-label">PDV</span>
                                     <div style="font-size: 14px; font-weight: 600; color: var(--primary); margin-top: 4px;" id="exibePDV">—</div>
-                                </div>
-                                <div>
-                                    <span class="resultado-label">Cupom</span>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--primary); margin-top: 4px;" id="exibeCupom">—</div>
                                 </div>
                             </div>
                         </div>
@@ -902,7 +922,7 @@
                 <input type="text" id="editNumeroPDV" placeholder="Número do PDV">
             </div>
             <div class="modal-field">
-                <label>Cupom</label>
+                <label>Cupom <span style="font-size: 10px; color: var(--neutral);">(adicionado depois)</span></label>
                 <input type="text" id="editNumeroCupom" placeholder="Número do cupom">
             </div>
             <div class="modal-buttons">
@@ -1059,7 +1079,7 @@
                         </div>
                         ` : ''}
                         ${item.numeroPDV ? `<div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${item.numeroPDV}</span></div>` : ''}
-                        ${item.numeroCupom ? `<div class="historico-field"><span class="historico-label">Cupom</span><span class="historico-valor">${item.numeroCupom}</span></div>` : ''}
+                        <div class="historico-field"><span class="historico-label">Cupom</span><span class="historico-valor">${item.numeroCupom || '<span style="color: var(--neutral); opacity: 0.5;">—</span>'}</span></div>
                         <div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${formatarMoeda(item.precoPDV)}</span></div>
                         <div class="historico-field"><span class="historico-label">Etiqueta</span><span class="historico-valor">${formatarMoeda(item.precoEncarte)}</span></div>
                     </div>
@@ -1128,7 +1148,6 @@
             const precoEncarte = parseFloat(document.getElementById('precoEncarte').value);
             const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
             const numeroPDV = document.getElementById('numeroPDV').value.trim();
-            const numeroCupom = document.getElementById('numeroCupom').value.trim();
             const nomeProduto = document.getElementById('nomeProduto').value.trim();
 
             if (!precoPDV && precoPDV !== 0) {
@@ -1164,12 +1183,11 @@
             document.getElementById('resultadoHeader').className = 'resultado-header ' + status;
             document.getElementById('mensagem').textContent = mensagem;
             
-            // Exibir PDV e Cupom se preenchidos
+            // Exibir PDV se preenchido
             const linhaInfos = document.getElementById('linhaInfos');
-            if (numeroPDV || numeroCupom) {
+            if (numeroPDV) {
                 linhaInfos.style.display = 'flex';
                 document.getElementById('exibePDV').textContent = numeroPDV || '—';
-                document.getElementById('exibeCupom').textContent = numeroCupom || '—';
             } else {
                 linhaInfos.style.display = 'none';
             }
@@ -1189,7 +1207,7 @@
                 diferencaTotal,
                 status,
                 numeroPDV,
-                numeroCupom,
+                numeroCupom: '',
                 nomeProduto
             });
         }
@@ -1236,11 +1254,6 @@
         window.addEventListener('appinstalled', () => {
             document.getElementById('installBtn').classList.remove('show');
         });
-
-        // SERVICE WORKER
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
-        }
     </script>
 </body>
 </html>
