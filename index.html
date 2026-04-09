@@ -512,13 +512,13 @@
         .historico-item {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%);
             border: 1px solid rgba(14, 165, 233, 0.2);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 14px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             transition: all 0.2s ease;
-            gap: 8px;
+            gap: 10px;
         }
 
         .historico-item:hover {
@@ -1068,26 +1068,50 @@
 
             container.innerHTML = historico.map((item, idx) => `
                 <div class="historico-item">
-                    <div class="historico-info">
-                        <div style="grid-column: 1 / -1; font-size: 11px; color: var(--neutral); margin-bottom: 8px;">
-                            ${item.timestamp}
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(148, 163, 184, 0.6); margin-bottom: 4px;">
+                                    ${item.timestamp}
+                                </div>
+                                ${item.nomeProduto ? `
+                                <div style="font-size: 14px; font-weight: 700; color: var(--primary);">
+                                    ${item.nomeProduto}
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: rgba(148, 163, 184, 0.6); margin-bottom: 4px;">Diferença</div>
+                                <div style="font-size: 18px; font-weight: 800; color: ${item.status === 'acima' ? 'var(--danger)' : item.status === 'abaixo' ? 'var(--secondary)' : 'var(--neutral)'};">
+                                    ${formatarMoeda(item.diferencaTotal)}
+                                </div>
+                            </div>
                         </div>
-                        ${item.nomeProduto ? `
-                        <div style="grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
-                            ${item.nomeProduto}
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(148, 163, 184, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">PDV</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${item.numeroPDV ? item.numeroPDV : '—'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: rgba(148, 163, 184, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Cupom</div>
+                                <div style="font-size: 12px; font-weight: 700; color: ${item.numeroCupom ? 'var(--primary)' : 'rgba(148, 163, 184, 0.5)'};">${item.numeroCupom || '—'}</div>
+                            </div>
                         </div>
-                        ` : ''}
-                        ${item.numeroPDV ? `<div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${item.numeroPDV}</span></div>` : ''}
-                        <div class="historico-field"><span class="historico-label">Cupom</span><span class="historico-valor">${item.numeroCupom || '<span style="color: var(--neutral); opacity: 0.5;">—</span>'}</span></div>
-                        <div class="historico-field"><span class="historico-label">PDV</span><span class="historico-valor">${formatarMoeda(item.precoPDV)}</span></div>
-                        <div class="historico-field"><span class="historico-label">Etiqueta</span><span class="historico-valor">${formatarMoeda(item.precoEncarte)}</span></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(148, 163, 184, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Preço PDV</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${formatarMoeda(item.precoPDV)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: rgba(148, 163, 184, 0.6); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Etiqueta</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${formatarMoeda(item.precoEncarte)}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="historico-resultado">
-                        <div class="historico-resultado-label">Diferença</div>
-                        <div class="historico-resultado-valor ${item.status}">${formatarMoeda(item.diferencaTotal)}</div>
+                    <div style="display: flex; gap: 8px; align-self: flex-start;">
+                        <button class="historico-delete" onclick="abrirModalEdicao(${idx})">✏️</button>
+                        <button class="historico-delete" onclick="deletarDoHistorico(${idx})">✕</button>
                     </div>
-                    <button class="historico-delete" onclick="abrirModalEdicao(${idx})">✏️</button>
-                    <button class="historico-delete" onclick="deletarDoHistorico(${idx})">✕</button>
                 </div>
             `).join('');
         }
