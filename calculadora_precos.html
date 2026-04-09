@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="description" content="Calculadora profissional para supermercados com comparador de preços PDV vs Etiqueta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calculadora">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230ea5e9' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>🧮</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230ea5e9' width='180' height='180'/><text x='50%' y='50%' font-size='90' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>🧮</text></svg>">
+    <link rel="manifest" href="manifest.json">>
+    <title>Calculadora - Preços Supermercado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #10b981;
+            --danger: #f43f5e;
+            --accent: #8b5cf6;
+            --accent2: #ec4899;
+            --neutral: #64748b;
+            --light: #f8fafc;
+            --surface: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e8eef7 50%, #f0f4f8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 0;
+            padding: 20px 16px;
+            box-shadow: none;
+            animation: slideUp 0.6s ease-out;
+            border: none;
+            backdrop-filter: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding-top: 8px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 3px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 10px;
+            color: rgba(148, 163, 184, 0.7);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        .install-btn {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #10d981 100%);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transition: all 0.3s ease;
+            display: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .install-btn.show {
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(14, 165, 233, 0.9);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        input::placeholder {
+            color: #cbd5e1;
+        }
+
+        input:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        button {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-calcular {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+            color: #1a1a2e;
+            grid-column: 1 / -1;
+            font-size: 15px;
+            padding: 14px;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+            font-weight: 800;
+        }
+
+        .btn-calcular:hover {
+            background: linear-gradient(135deg, #0284c7 0%, #ec2f6a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+        }
+
+        .btn-limpar {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            color: var(--primary);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-limpar:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%);
+            border-color: var(--accent);
+        }
+
+        .resultado {
+            margin-top: 12px;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .resultado.ativo {
+            display: block;
+        }
+
+        .resultado-header {
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .resultado-header.acima {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(244, 63, 94, 0.04) 100%);
+            border-left: 4px solid var(--danger);
+        }
+
+        .resultado-header.abaixo {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .resultado-header.igual {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.08) 0%, rgba(100, 116, 139, 0.04) 100%);
+            border-left: 4px solid var(--neutral);
+        }
+
+        .resultado-titulo {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .resultado-header.acima .resultado-titulo {
+            color: var(--danger);
+        }
+
+        .resultado-header.abaixo .resultado-titulo {
+            color: var(--secondary);
+        }
+
+        .resultado-header.igual .resultado-titulo {
+            color: var(--neutral);
+        }
+
+        .resultado-subtitle {
+            font-size: 12px;
+            color: var(--neutral);
+        }
+
+        .resultado-items {
+            display: grid;
+            gap: 12px;
+        }
+
+        .resultado-item {
+            background: #f1f5f9;
+            padding: 14px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .resultado-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .resultado-valor {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .resultado-item.diferenca-total {
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: none;
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .resultado-item.diferenca-total .resultado-valor {
+            font-size: 22px;
+        }
+
+        .resultado-item.acima .resultado-valor {
+            color: var(--danger);
+        }
+
+        .resultado-item.abaixo .resultado-valor {
+            color: var(--secondary);
+        }
+
+        .resultado-item.igual .resultado-valor {
+            color: var(--neutral);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn.ativo {
+            background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+            color: #1a1a2e;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.ativo {
+            display: block;
+        }
+
+        .calculadora-display {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #1a1a2e;
+            padding: 24px;
+            border-radius: 14px;
+            text-align: right;
+            margin-bottom: 28px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-wrap: break-word;
+            word-break: break-all;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.2), inset 0 1px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+        }
+
+        .calc-valor {
+            font-size: 42px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .calc-anterior {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .calculadora-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .calc-btn {
+            padding: 18px 12px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            background: #f1f5f9;
+            color: var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            background: #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .calc-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .calc-btn.operador {
+            background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+            color: #1a1a2e;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+            border: none;
+        }
+
+        .calc-btn.operador:hover {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .calc-btn.igual {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            color: #1a1a2e;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            border: none;
+        }
+
+        .calc-btn.igual:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .calc-btn.limpar {
+            grid-column: 1 / 3;
+            background: #fecaca;
+            color: var(--danger);
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 2px 8px rgba(244, 63, 94, 0.1);
+        }
+
+        .calc-btn.limpar:hover {
+            background: #fca5a5;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
+        }
+
+        .historico-container {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(14, 165, 233, 0.2);
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .historico-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .historico-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .historico-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .historico-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .historico-list::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.3);
+            border-radius: 2px;
+        }
+
+        .historico-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.2s ease;
+            gap: 10px;
+        }
+
+        .historico-item:hover {
+            background: #f1f5f9;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        .historico-info {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .historico-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .historico-label {
+            color: var(--neutral);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .historico-valor {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .historico-resultado {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: flex-end;
+        }
+
+        .historico-resultado-label {
+            color: var(--neutral);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .historico-resultado-valor {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .historico-resultado-valor.acima {
+            color: var(--danger);
+        }
+
+        .historico-resultado-valor.abaixo {
+            color: var(--secondary);
+        }
+
+        .historico-resultado-valor.igual {
+            color: var(--neutral);
+        }
+
+        .historico-delete {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px;
+            margin-left: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .historico-delete:hover {
+            transform: scale(1.2);
+        }
+
+        .historico-empty {
+            text-align: center;
+            color: var(--neutral);
+            padding: 24px 16px;
+            font-size: 13px;
+        }
+
+        .btn-limpar-historico {
+            width: 100%;
+            margin-top: 8px;
+            padding: 10px;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: var(--danger);
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-limpar-historico:hover {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .modal-field {
+            margin-bottom: 16px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-field input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 26, 46, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-btn.save {
+            background: var(--primary);
+            color: #1a1a2e;
+        }
+
+        .modal-btn.save:hover {
+            background: #0f0f1f;
+        }
+
+        .modal-btn.cancel {
+            background: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e5e7eb;
+        }
+            .card {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            input {
+                padding: 12px 14px;
+                font-size: 16px;
+            }
+
+            button {
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+
+            .resultado-header {
+                padding: 16px 18px;
+            }
+
+            .calc-valor {
+                font-size: 36px;
+            }
+
+            .calculadora-grid {
+                gap: 10px;
+            }
+
+            .calc-btn {
+                padding: 16px 10px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Calculadora</h1>
+                <p>Ferramentas de cálculo</p>
+                <button id="installBtn" class="install-btn" onclick="instalarApp()">📱 Instalar no Celular</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn ativo" onclick="abaCalculadora()">Calculadora</button>
+                <button class="tab-btn" onclick="abaComparador()">Comparador</button>
+                <button class="tab-btn" onclick="abaConversao()">Conversão</button>
+            </div>
+            <div id="tabCalculadora" class="tab-content ativo">
+                <div class="calculadora-display" id="display">0</div>
+                <div class="calculadora-grid">
+                    <button class="calc-btn limpar" onclick="calcLimpar()">C</button>
+                    <button class="calc-btn operador" onclick="calcOperador('/')">/</button>
+                    <button class="calc-btn operador" onclick="calcOperador('*')">×</button>
+                    <button class="calc-btn operador" onclick="calcBackspace()">⌫</button>
+
+                    <button class="calc-btn" onclick="calcNumero('7')">7</button>
+                    <button class="calc-btn" onclick="calcNumero('8')">8</button>
+                    <button class="calc-btn" onclick="calcNumero('9')">9</button>
+                    <button class="calc-btn operador" onclick="calcOperador('-')">−</button>
+
+                    <button class="calc-btn" onclick="calcNumero('4')">4</button>
+                    <button class="calc-btn" onclick="calcNumero('5')">5</button>
+                    <button class="calc-btn" onclick="calcNumero('6')">6</button>
+                    <button class="calc-btn operador" onclick="calcOperador('+')">+</button>
+
+                    <button class="calc-btn" onclick="calcNumero('1')">1</button>
+                    <button class="calc-btn" onclick="calcNumero('2')">2</button>
+                    <button class="calc-btn" onclick="calcNumero('3')">3</button>
+                    <button class="calc-btn operador" onclick="calcToggleNegativo()">±</button>
+
+                    <button class="calc-btn" onclick="calcNumero('0')" style="grid-column: 1 / 3;">0</button>
+                    <button class="calc-btn" onclick="calcNumero('.')">.</button>
+                    <button class="calc-btn igual" onclick="calcIgual()">=</button>
+                </div>
+            </div>
+
+            <!-- ABA COMPARADOR DE PREÇOS -->
+            <div id="tabComparador" class="tab-content">
+                <form id="form">
+                    <div class="form-group">
+                        <label for="precoPDV">Preço do PDV (R$)</label>
+                        <input
+                            type="number"
+                            id="precoPDV"
+                            placeholder="0,00"
+                            step="0.01"
+                            min="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precoEncarte">Preço da Etiqueta (R$)</label>
+                        <input
+                            type="number"
+                            id="precoEncarte"
+                            placeholder="0,00"
+                            step="0.01"
+                            min="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade</label>
+                        <input
+                            type="number"
+                            id="quantidade"
+                            placeholder="1"
+                            step="1"
+                            min="1"
+                            value="1"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numeroPDV">Número do PDV</label>
+                        <input
+                            type="text"
+                            id="numeroPDV"
+                            placeholder="Ex: PDV-001"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomeProduto">Nome do Produto</label>
+                        <input
+                            type="text"
+                            id="nomeProduto"
+                            placeholder="Ex: Arroz 5kg"
+                        >
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="btn-calcular" onclick="calcular()">
+                            Calcular
+                        </button>
+                        <button type="button" class="btn-limpar" onclick="limpar()">
+                            Limpar
+                        </button>
+                    </div>
+                </form>
+
+                <div id="resultado" class="resultado">
+                    <div id="resultadoHeader" class="resultado-header">
+                        <div class="resultado-titulo" id="mensagem"></div>
+                        <div class="resultado-subtitle">Análise de diferença de preço</div>
+                    </div>
+                    <div class="resultado-items">
+                        <div class="resultado-item" id="linhaInfos" style="display: none; gap: 16px; flex-direction: column; align-items: flex-start;">
+                            <div style="display: flex; gap: 16px; width: 100%; font-size: 12px;">
+                                <div>
+                                    <span class="resultado-label">PDV</span>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--primary); margin-top: 4px;" id="exibePDV">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="resultado-item">
+                            <span class="resultado-label">Diferença por Unidade</span>
+                            <span class="resultado-valor" id="diferenca"></span>
+                        </div>
+                        <div class="resultado-item diferenca-total" id="linhaTotal">
+                            <span class="resultado-label">Diferença Total (Qtd: <span id="qtdExibida">1</span>)</span>
+                            <span class="resultado-valor" id="diferencaTotal"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HISTÓRICO -->
+                <div class="historico-container">
+                    <div class="historico-title">Histórico de Cálculos</div>
+                    <div class="historico-list" id="historicoList">
+                        <div class="historico-empty">Nenhum cálculo ainda</div>
+                    </div>
+                    <button class="btn-limpar-historico" onclick="limparHistorico()">Limpar Histórico</button>
+                </div>
+            </div>
+
+            <!-- ABA CONVERSÃO -->
+            <div id="tabConversao" class="tab-content">
+                <div style="padding: 0;">
+                    <div class="form-group">
+                        <label for="precoUnitario">Preço Unitário (R$)</label>
+                        <input type="number" id="precoUnitario" placeholder="Ex: 9.90" step="0.01" min="0" oninput="calcularPrecoKg()">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 12px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="pesoValor">Peso</label>
+                            <input type="number" id="pesoValor" placeholder="Ex: 1.349" step="0.001" min="0" oninput="calcularPrecoKg()">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="pesoUnidade">Unidade</label>
+                            <select id="pesoUnidade" onchange="calcularPrecoKg()" style="width: 100%; padding: 10px 8px; font-size: 13px; border: none; border-radius: 10px; background: rgba(241, 245, 249, 0.8); color: #1a1a2e; font-weight: 600; cursor: pointer;">
+                                <option value="kg">kg</option>
+                                <option value="g">g</option>
+                                <option value="mg">mg</option>
+                                <option value="lb">lb</option>
+                                <option value="oz">oz</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="precoKgResultado" style="display: none; background: linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(226, 232, 240, 0.6) 100%); padding: 14px; border-radius: 10px; border: 1px solid rgba(14, 165, 233, 0.15); margin-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 11px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 6px;">Preço Total</div>
+                                <div style="font-size: 26px; font-weight: 800; color: var(--primary);" id="precoKgValor">R$ 0,00</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 6px;">Cálculo</div>
+                                <div style="font-size: 14px; font-weight: 600; color: rgba(100, 116, 139, 0.8);" id="precoKgCalculo">0,00 × 0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIÇÃO -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Editar Cálculo</div>
+            <div class="modal-field">
+                <label>Produto</label>
+                <input type="text" id="editNomeProduto" placeholder="Nome do produto">
+            </div>
+            <div class="modal-field">
+                <label>PDV</label>
+                <input type="text" id="editNumeroPDV" placeholder="Número do PDV">
+            </div>
+            <div class="modal-field">
+                <label>Cupom <span style="font-size: 10px; color: var(--neutral);">(adicionado depois)</span></label>
+                <input type="text" id="editNumeroCupom" placeholder="Número do cupom">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn save" onclick="salvarEdicao()">Salvar</button>
+                <button class="modal-btn cancel" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // VARIÁVEIS CALCULADORA
+        let calcValorAtual = '0';
+        let calcValorAnterior = '';
+        let calcOperacao = null;
+        let calcNovoValor = true;
+
+        // ABAS
+
+        function abaCalculadora() {
+            document.getElementById('tabCalculadora').classList.add('ativo');
+            document.getElementById('tabComparador').classList.remove('ativo');
+            document.getElementById('tabConversao').classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[0].classList.add('ativo');
+            document.querySelectorAll('.tab-btn')[1].classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[2].classList.remove('ativo');
+        }
+
+        function abaComparador() {
+            document.getElementById('tabCalculadora').classList.remove('ativo');
+            document.getElementById('tabComparador').classList.add('ativo');
+            document.getElementById('tabConversao').classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[0].classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[1].classList.add('ativo');
+            document.querySelectorAll('.tab-btn')[2].classList.remove('ativo');
+        }
+
+        function abaConversao() {
+            document.getElementById('tabCalculadora').classList.remove('ativo');
+            document.getElementById('tabComparador').classList.remove('ativo');
+            document.getElementById('tabConversao').classList.add('ativo');
+            document.querySelectorAll('.tab-btn')[0].classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[1].classList.remove('ativo');
+            document.querySelectorAll('.tab-btn')[2].classList.add('ativo');
+        }
+
+        // CALCULADORA
+        function atualizarDisplay() {
+            let texto = calcValorAtual;
+            if (calcOperacao) {
+                texto = `<span class="calc-anterior">${calcValorAnterior} ${calcOperacao}</span> ${calcValorAtual}`;
+            }
+            document.getElementById('display').innerHTML = texto;
+        }
+
+        function calcNumero(num) {
+            if (calcNovoValor) {
+                calcValorAtual = num;
+                calcNovoValor = false;
+            } else {
+                if (num === '.' && calcValorAtual.includes('.')) return;
+                calcValorAtual += num;
+            }
+            atualizarDisplay();
+        }
+
+        function calcOperador(op) {
+            if (calcOperacao && !calcNovoValor) {
+                calcIgual();
+            }
+            calcValorAnterior = calcValorAtual;
+            calcOperacao = op === '*' ? '×' : op === '/' ? '÷' : op;
+            calcNovoValor = true;
+            atualizarDisplay();
+        }
+
+        function calcIgual() {
+            if (!calcOperacao || calcNovoValor) return;
+            
+            let resultado;
+            const anterior = parseFloat(calcValorAnterior);
+            const atual = parseFloat(calcValorAtual);
+
+            switch(calcOperacao) {
+                case '+': resultado = anterior + atual; break;
+                case '−': resultado = anterior - atual; break;
+                case '×': resultado = anterior * atual; break;
+                case '÷': resultado = anterior / atual; break;
+                default: return;
+            }
+
+            calcValorAtual = resultado.toString();
+            calcOperacao = null;
+            calcValorAnterior = '';
+            calcNovoValor = true;
+            atualizarDisplay();
+        }
+
+        function calcLimpar() {
+            calcValorAtual = '0';
+            calcValorAnterior = '';
+            calcOperacao = null;
+            calcNovoValor = true;
+            atualizarDisplay();
+        }
+
+        function calcBackspace() {
+            if (calcValorAtual.length > 1) {
+                calcValorAtual = calcValorAtual.slice(0, -1);
+            } else {
+                calcValorAtual = '0';
+            }
+            atualizarDisplay();
+        }
+
+        function calcToggleNegativo() {
+            const valor = parseFloat(calcValorAtual);
+            calcValorAtual = (valor * -1).toString();
+            atualizarDisplay();
+        }
+
+        // COMPARADOR
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function carregarHistorico() {
+            const historico = localStorage.getItem('historicoCalculos');
+            return historico ? JSON.parse(historico) : [];
+        }
+
+        function salvarHistorico(historico) {
+            localStorage.setItem('historicoCalculos', JSON.stringify(historico));
+        }
+
+        function adicionarAoHistorico(dados) {
+            const historico = carregarHistorico();
+            historico.unshift({
+                ...dados,
+                timestamp: new Date().toLocaleString('pt-BR')
+            });
+            if (historico.length > 50) historico.pop();
+            salvarHistorico(historico);
+            exibirHistorico();
+        }
+
+        function exibirHistorico() {
+            const historico = carregarHistorico();
+            const container = document.getElementById('historicoList');
+            
+            if (historico.length === 0) {
+                container.innerHTML = '<div class="historico-empty">Nenhum cálculo ainda</div>';
+                return;
+            }
+
+            container.innerHTML = historico.map((item, idx) => `
+                <div class="historico-item">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(100, 116, 139, 0.8); margin-bottom: 4px;">
+                                    ${item.timestamp}
+                                </div>
+                                ${item.nomeProduto ? `
+                                <div style="font-size: 14px; font-weight: 700; color: var(--primary);">
+                                    ${item.nomeProduto}
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: rgba(100, 116, 139, 0.8); margin-bottom: 4px;">Diferença</div>
+                                <div style="font-size: 18px; font-weight: 800; color: ${item.status === 'acima' ? 'var(--danger)' : item.status === 'abaixo' ? 'var(--secondary)' : 'var(--neutral)'};">
+                                    ${formatarMoeda(item.diferencaTotal)}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">PDV</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${item.numeroPDV ? item.numeroPDV : '—'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Cupom</div>
+                                <div style="font-size: 12px; font-weight: 700; color: ${item.numeroCupom ? 'var(--primary)' : 'rgba(148, 163, 184, 0.5)'};">${item.numeroCupom || '—'}</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="font-size: 10px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Preço PDV</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${formatarMoeda(item.precoPDV)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: rgba(100, 116, 139, 0.8); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 3px;">Etiqueta</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">${formatarMoeda(item.precoEncarte)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-self: flex-start;">
+                        <button class="historico-delete" onclick="abrirModalEdicao(${idx})">✏️</button>
+                        <button class="historico-delete" onclick="deletarDoHistorico(${idx})">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deletarDoHistorico(idx) {
+            const historico = carregarHistorico();
+            historico.splice(idx, 1);
+            salvarHistorico(historico);
+            exibirHistorico();
+        }
+
+        function limparHistorico() {
+            if (confirm('Tem certeza que quer limpar todo o histórico?')) {
+                localStorage.removeItem('historicoCalculos');
+                exibirHistorico();
+            }
+        }
+
+        let editandoIdx = null;
+
+        function abrirModalEdicao(idx) {
+            editandoIdx = idx;
+            const historico = carregarHistorico();
+            const item = historico[idx];
+            
+            document.getElementById('editNomeProduto').value = item.nomeProduto || '';
+            document.getElementById('editNumeroPDV').value = item.numeroPDV || '';
+            document.getElementById('editNumeroCupom').value = item.numeroCupom || '';
+            
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function fecharModal() {
+            document.getElementById('editModal').classList.remove('show');
+            editandoIdx = null;
+        }
+
+        function salvarEdicao() {
+            if (editandoIdx === null) return;
+            
+            const historico = carregarHistorico();
+            historico[editandoIdx].nomeProduto = document.getElementById('editNomeProduto').value;
+            historico[editandoIdx].numeroPDV = document.getElementById('editNumeroPDV').value;
+            historico[editandoIdx].numeroCupom = document.getElementById('editNumeroCupom').value;
+            
+            salvarHistorico(historico);
+            exibirHistorico();
+            fecharModal();
+        }
+
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) fecharModal();
+        });
+
+        function calcular() {
+            const precoPDV = parseFloat(document.getElementById('precoPDV').value);
+            const precoEncarte = parseFloat(document.getElementById('precoEncarte').value);
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const numeroPDV = document.getElementById('numeroPDV').value.trim();
+            const nomeProduto = document.getElementById('nomeProduto').value.trim();
+
+            if (!precoPDV && precoPDV !== 0) {
+                alert('Informe o preço do PDV');
+                return;
+            }
+            if (!precoEncarte && precoEncarte !== 0) {
+                alert('Informe o preço do encarte');
+                return;
+            }
+            if (quantidade < 1) {
+                alert('Quantidade mínima é 1');
+                return;
+            }
+
+            const diferenca = precoPDV - precoEncarte;
+            const diferencaTotal = diferenca * quantidade;
+
+            let status;
+            let mensagem;
+            if (diferenca > 0) {
+                status = 'acima';
+                mensagem = 'PDV acima da etiqueta';
+            } else if (diferenca < 0) {
+                status = 'abaixo';
+                mensagem = 'PDV abaixo da etiqueta';
+            } else {
+                status = 'igual';
+                mensagem = 'PDV igual à etiqueta';
+            }
+
+            document.getElementById('resultado').classList.add('ativo');
+            document.getElementById('resultadoHeader').className = 'resultado-header ' + status;
+            document.getElementById('mensagem').textContent = mensagem;
+            
+            // Exibir PDV se preenchido
+            const linhaInfos = document.getElementById('linhaInfos');
+            if (numeroPDV) {
+                linhaInfos.style.display = 'flex';
+                document.getElementById('exibePDV').textContent = numeroPDV || '—';
+            } else {
+                linhaInfos.style.display = 'none';
+            }
+            
+            document.getElementById('diferenca').textContent = formatarMoeda(diferenca);
+            document.getElementById('diferenca').parentElement.className = 'resultado-item ' + status;
+            document.getElementById('diferencaTotal').textContent = formatarMoeda(diferencaTotal);
+            document.getElementById('diferencaTotal').parentElement.className = 'resultado-item diferenca-total ' + status;
+            document.getElementById('qtdExibida').textContent = quantidade;
+
+            // Adicionar ao histórico
+            adicionarAoHistorico({
+                precoPDV,
+                precoEncarte,
+                quantidade,
+                diferenca,
+                diferencaTotal,
+                status,
+                numeroPDV,
+                numeroCupom: '',
+                nomeProduto
+            });
+        }
+
+        function limpar() {
+            document.getElementById('form').reset();
+            document.getElementById('quantidade').value = '1';
+            document.getElementById('resultado').classList.remove('ativo');
+        }
+
+        document.getElementById('precoPDV').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calcular();
+        });
+        document.getElementById('precoEncarte').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calcular();
+        });
+        document.getElementById('quantidade').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calcular();
+        });
+
+        atualizarDisplay();
+        exibirHistorico();
+
+        // CÁLCULO PREÇO POR KG
+        function calcularPrecoKg() {
+            const precoUnitario = parseFloat(document.getElementById('precoUnitario').value);
+            const pesoValor = parseFloat(document.getElementById('pesoValor').value);
+            const pesoUnidade = document.getElementById('pesoUnidade').value;
+
+            if (!precoUnitario || precoUnitario <= 0 || !pesoValor || pesoValor <= 0) {
+                document.getElementById('precoKgResultado').style.display = 'none';
+                return;
+            }
+
+            // Converter para kg
+            let pesoEmKg = pesoValor;
+            switch(pesoUnidade) {
+                case 'g': pesoEmKg = pesoValor / 1000; break;
+                case 'mg': pesoEmKg = pesoValor / 1000000; break;
+                case 'lb': pesoEmKg = pesoValor * 0.453592; break;
+                case 'oz': pesoEmKg = pesoValor * 0.0283495; break;
+            }
+
+            const precoTotal = precoUnitario * pesoEmKg;
+
+            document.getElementById('precoKgResultado').style.display = 'block';
+            document.getElementById('precoKgValor').textContent = formatarMoeda(precoTotal);
+            document.getElementById('precoKgCalculo').textContent = `R$ ${precoUnitario.toFixed(2)} × ${pesoValor.toFixed(3)} ${pesoUnidade}`;
+        }
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').classList.add('show');
+        });
+
+        function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installBtn').classList.remove('show');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installBtn').classList.remove('show');
+        });
+    </script>
+</body>
+</html>
